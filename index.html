@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="FreeMEF: a flexible-frame transformer for multi-exposure fusion.">
+    <meta name="theme-color" content="#f7fbff">
+    <title>FreeMEF | Flexible-Frame Multi-Exposure Fusion</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div class="liquid-field" aria-hidden="true">
+      <span class="beam beam-a"></span>
+      <span class="beam beam-b"></span>
+      <span class="beam beam-c"></span>
+    </div>
+
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="FreeMEF home">
+        <span class="brand-mark"></span>
+        <span>FreeMEF</span>
+      </a>
+      <nav class="nav-links" aria-label="Primary navigation">
+        <a href="#method">Method</a>
+        <a href="#results">Results</a>
+        <a href="#figures">Figures</a>
+        <a href="https://github.com/qulishen/MEF">Code</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero section-shell">
+        <div class="hero-media" aria-hidden="true">
+          <img src="assets/images/kalantari.png" alt="">
+          <div class="hero-vignette"></div>
+        </div>
+        <div class="hero-content">
+          <p class="eyebrow">Flexible-frame HDR imaging</p>
+          <h1>There and Back Again</h1>
+          <p class="subtitle">A flexible-frame transformer for multi-exposure fusion that accepts varying exposure counts without retraining or architectural changes.</p>
+          <div class="hero-actions">
+            <a class="button primary" href="#method">Explore the Method</a>
+            <a class="button secondary" href="#results">See Results</a>
+          </div>
+          <div class="hero-metrics" aria-label="Key results">
+            <div>
+              <strong>28.418</strong>
+              <span>PSNR on Kalantari</span>
+            </div>
+            <div>
+              <strong>26.077</strong>
+              <span>PSNR on Real-HDRV</span>
+            </div>
+            <div>
+              <strong>2/3/5</strong>
+              <span>frames, one model</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="intro section-shell">
+        <div class="section-kicker">Why it matters</div>
+        <h2>One model for changing exposure brackets.</h2>
+        <p>Existing MEF systems are usually locked to a fixed number of frames. FreeMEF breaks that constraint by decoupling reference features from the base frame, recurrently aggregating arbitrary exposure sequences, and returning global HDR guidance to the restoration backbone.</p>
+        <div class="signal-strip" aria-hidden="true"></div>
+      </section>
+
+      <section id="method" class="section-shell method-grid">
+        <article class="glass-card feature-card">
+          <span class="tag cyan">RSSM</span>
+          <h3>Recurrent State Space Module</h3>
+          <p>Sequentially fuses any number of exposure frames into a global feature. The recurrent design keeps the model frame-count agnostic while preserving useful context from the exposure sequence.</p>
+        </article>
+        <article class="glass-card feature-card">
+          <span class="tag coral">EAHA</span>
+          <h3>Extremity-Aware Hybrid Attention</h3>
+          <p>Targets the similarity paradox: saturated regions look dissimilar but need reference information most. EAHA balances cross-attention and self-attention with an extremity-aware query pathway.</p>
+        </article>
+        <article class="glass-card feature-card">
+          <span class="tag lime">AFFN</span>
+          <h3>Affine-Injection FFN</h3>
+          <p>Injects global exposure statistics into the feed-forward network, dynamically recalibrating contrast and brightness with learned affine modulation.</p>
+        </article>
+      </section>
+
+      <section class="section-shell figure-panel">
+        <div class="section-copy">
+          <div class="section-kicker">Core pipeline</div>
+          <h2>Fuse globally, restore selectively.</h2>
+          <p>FreeMEF first travels through the exposure sequence to build global context, then comes back to guide the base frame through a U-shaped Transformer. The pipeline is designed for practical MEF deployments where frame counts can change across devices and capture modes.</p>
+        </div>
+        <div class="liquid-frame">
+          <img src="assets/images/pipeline.png" alt="Overview of the FreeMEF recurrent fusion and U-shaped transformer pipeline.">
+        </div>
+      </section>
+
+      <section class="section-shell split-showcase">
+        <div class="liquid-frame">
+          <img src="assets/images/motivation.png" alt="Comparison among fusion before self-attention, cross-attention before fusion, and the proposed recurrent fusion before cross-attention.">
+        </div>
+        <div class="glass-card explanation">
+          <div class="section-kicker">Fusion paradigm</div>
+          <h2>There, then back again.</h2>
+          <p>The method first aggregates reference information into a global representation, then returns that context to the base frame through selective attention. This reduces ghosting while supporting arbitrary input lengths.</p>
+        </div>
+      </section>
+
+      <section id="results" class="section-shell results-section">
+        <div class="section-copy centered">
+          <div class="section-kicker">Quantitative results</div>
+          <h2>Stronger restoration with practical compute.</h2>
+          <p>FreeMEF achieves the best metrics on both standard 3-frame evaluation and cross-dataset variable-frame testing.</p>
+        </div>
+
+        <div class="table-wrap glass-card">
+          <div class="table-title">
+            <h3>3-frame evaluation</h3>
+            <span>Best values highlighted</span>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Method</th>
+                <th>Kalantari PSNR</th>
+                <th>Kalantari SSIM</th>
+                <th>Kalantari LPIPS</th>
+                <th>Real-HDRV PSNR</th>
+                <th>Real-HDRV SSIM</th>
+                <th>Real-HDRV LPIPS</th>
+                <th>FLOPs</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>HDR-Transformer</td><td>27.024</td><td>0.935</td><td>0.093</td><td>25.131</td><td>0.930</td><td>0.079</td><td>95.261G</td></tr>
+              <tr><td>Restormer</td><td>27.149</td><td>0.930</td><td>0.097</td><td>25.562</td><td>0.924</td><td>0.089</td><td>141.160G</td></tr>
+              <tr><td>AFUNet</td><td>27.226</td><td>0.925</td><td>0.091</td><td>25.423</td><td>0.912</td><td>0.084</td><td>75.340G</td></tr>
+              <tr class="winner"><td>FreeMEF</td><td>28.418</td><td>0.948</td><td>0.081</td><td>26.077</td><td>0.940</td><td>0.074</td><td>41.496G</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="score-grid">
+          <article class="score-card glass-card">
+            <span>2-frame SICE</span>
+            <strong>17.087</strong>
+            <p>+1.748 dB over second-best PSNR</p>
+          </article>
+          <article class="score-card glass-card">
+            <span>3-frame SICE</span>
+            <strong>19.326</strong>
+            <p>+0.657 dB over second-best PSNR</p>
+          </article>
+          <article class="score-card glass-card">
+            <span>5-frame SICE</span>
+            <strong>22.269</strong>
+            <p>+1.116 dB over second-best PSNR</p>
+          </article>
+        </div>
+
+        <div class="table-wrap glass-card compact-table">
+          <div class="table-title">
+            <h3>Cross-dataset variable-frame evaluation on SICE</h3>
+            <span>One FreeMEF model, different frame counts</span>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Method</th>
+                <th>2-frame PSNR</th>
+                <th>2-frame SSIM</th>
+                <th>2-frame LPIPS</th>
+                <th>3-frame PSNR</th>
+                <th>3-frame SSIM</th>
+                <th>3-frame LPIPS</th>
+                <th>5-frame PSNR</th>
+                <th>5-frame SSIM</th>
+                <th>5-frame LPIPS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>HDR-Transformer</td><td>15.339</td><td>0.690</td><td>0.262</td><td>18.151</td><td>0.746</td><td>0.227</td><td>20.748</td><td>0.830</td><td>0.171</td></tr>
+              <tr><td>SCTNet</td><td>15.288</td><td>0.685</td><td>0.264</td><td>18.724</td><td>0.768</td><td>0.210</td><td>21.153</td><td>0.842</td><td>0.177</td></tr>
+              <tr><td>AFUNet</td><td>14.591</td><td>0.647</td><td>0.290</td><td>18.669</td><td>0.758</td><td>0.218</td><td>21.121</td><td>0.838</td><td>0.164</td></tr>
+              <tr class="winner"><td>FreeMEF</td><td>17.087</td><td>0.731</td><td>0.225</td><td>19.326</td><td>0.774</td><td>0.199</td><td>22.269</td><td>0.851</td><td>0.149</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section-shell figure-panel reverse">
+        <div class="section-copy">
+          <div class="section-kicker">Visual comparison</div>
+          <h2>Cleaner HDR details under motion and saturation.</h2>
+          <p>FreeMEF recovers backlit faces, suppresses motion artifacts, and preserves high-dynamic-range details across under- and over-exposed regions.</p>
+        </div>
+        <div class="liquid-frame">
+          <img src="assets/images/sice.png" alt="Visual comparisons on SICE showing FreeMEF recovering stronger dynamic range.">
+        </div>
+      </section>
+
+      <section id="figures" class="section-shell gallery-section">
+        <div class="section-copy centered">
+          <div class="section-kicker">Key figures</div>
+          <h2>Architecture, attention, ablations.</h2>
+        </div>
+        <div class="gallery">
+          <figure class="glass-card">
+            <img src="assets/images/gfgb.png" alt="GFGB module with EAHA and AFFN.">
+            <figcaption><strong>GFGB.</strong> Global feature guided block with EAHA and AFFN.</figcaption>
+          </figure>
+          <figure class="glass-card">
+            <img src="assets/images/eaha-query.png" alt="Query visualization for base and reference features.">
+            <figcaption><strong>Similarity paradox.</strong> Reference queries help saturated regions retrieve missing details.</figcaption>
+          </figure>
+          <figure class="glass-card wide">
+            <img src="assets/images/ablation-components.png" alt="Ablation study of RSSM, EAHA and AFFN.">
+            <figcaption><strong>Component ablation.</strong> RSSM, EAHA and AFFN all contribute to performance.</figcaption>
+          </figure>
+          <figure class="glass-card wide">
+            <img src="assets/images/ablation-eaha-affn.png" alt="Ablation results of EAHA and AFFN.">
+            <figcaption><strong>Qualitative ablation.</strong> EAHA restores saturated regions, while AFFN improves brightness control.</figcaption>
+          </figure>
+          <figure class="glass-card">
+            <img src="assets/images/fusion-order.png" alt="Visual comparison of exposure fusion orders.">
+            <figcaption><strong>Fusion order.</strong> Long-exposure frames are better scheduled near the end.</figcaption>
+          </figure>
+          <figure class="glass-card">
+            <img src="assets/images/limitation.png" alt="Example of color deviation limitation.">
+            <figcaption><strong>Limitation.</strong> Large exposure gaps can still produce color deviations.</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="section-shell closing">
+        <div class="glass-card closing-card">
+          <p class="eyebrow">FreeMEF</p>
+          <h2>Flexible-frame fusion for real capture pipelines.</h2>
+          <p>FreeMEF is designed for cameras and datasets where the exposure bracket is not fixed. One model can be trained and evaluated across heterogeneous frame counts while preserving HDR detail and reducing ghosting.</p>
+          <div class="hero-actions">
+            <a class="button primary" href="https://github.com/qulishen/MEF">GitHub Repository</a>
+            <a class="button secondary" href="#top">Back to Top</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
