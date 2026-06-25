@@ -549,6 +549,46 @@ th {
   margin-top: 18px;
 }
 
+.video-section {
+  padding: 64px 0 56px;
+}
+
+.video-frame {
+  position: relative;
+  overflow: hidden;
+  border-radius: 34px;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.76), rgba(236,247,255,0.48)),
+    radial-gradient(circle at 24% 16%, rgba(0, 166, 255, 0.26), transparent 34%),
+    radial-gradient(circle at 88% 18%, rgba(255, 176, 0, 0.2), transparent 30%);
+  backdrop-filter: blur(28px) saturate(1.35);
+  box-shadow: var(--shadow), inset 0 1px rgba(255, 255, 255, 0.86);
+}
+
+.video-frame::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(0, 166, 255, 0.16), transparent 26%, rgba(255, 176, 0, 0.14) 62%, rgba(255, 90, 95, 0.12)),
+    linear-gradient(120deg, rgba(255,255,255,0.62), transparent 34%, rgba(255,255,255,0.24) 62%, transparent);
+}
+
+.video-frame video {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 22px;
+  background: #07111f;
+  object-fit: contain;
+  box-shadow: 0 18px 52px rgba(8, 22, 42, 0.24);
+}
+
 .gallery-section {
   padding: 66px 0;
 }
@@ -755,7 +795,17 @@ figcaption strong {
   .figure-panel,
   .split-showcase,
   .results-section,
-  .gallery-section {
+  .gallery-section,
+  .video-section {
     padding: 38px 0;
+  }
+
+  .video-frame {
+    border-radius: 22px;
+    padding: 9px;
+  }
+
+  .video-frame video {
+    border-radius: 16px;
   }
 }
